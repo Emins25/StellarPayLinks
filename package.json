@@ -1,0 +1,39 @@
+{
+  "name": "stellarpaylinks",
+  "version": "1.0.0",
+  "description": "StellarPay Links is an open-source tool that lets anyone create simple payment links powered by the Stellar network.  Users can generate shareable URLs or QR codes that request payments in Stellar assets such as XLM or USDC.",
+  "main": "index.js",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/StellarPayLinks/StellarPayLinks.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/StellarPayLinks/StellarPayLinks/issues"
+  },
+  "homepage": "https://github.com/StellarPayLinks/StellarPayLinks#readme",
+  "dependencies": {
+    "@stellar/stellar-sdk": "^14.6.1",
+    "@tailwindcss/postcss": "^4.2.1",
+    "@types/node": "^25.5.0",
+    "@types/qrcode": "^1.5.6",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "autoprefixer": "^10.4.27",
+    "next": "^16.1.6",
+    "postcss": "^8.5.8",
+    "qrcode": "^1.5.4",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "stellar-sdk": "^13.3.0",
+    "tailwindcss": "^4.2.1",
+    "typescript": "^5.9.3"
+  }
+}
