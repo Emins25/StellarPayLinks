@@ -10,6 +10,8 @@ export default function CreatePage() {
   const [destination, setDestination] = useState("");
   const [amount, setAmount] = useState("");
   const [asset, setAsset] = useState("XLM");
+  const [memo, setMemo] = useState("");
+  const [memoType, setMemoType] = useState("text");
   const [generatedUrl, setGeneratedUrl] = useState("");
   const [error, setError] = useState("");
 
@@ -28,7 +30,10 @@ export default function CreatePage() {
     }
 
     const base = typeof window !== "undefined" ? window.location.origin : "http://localhost:3000";
-    const url = `${base}/pay?destination=${encodeURIComponent(destination)}&amount=${encodeURIComponent(amount)}&asset=${encodeURIComponent(asset)}`;
+    let url = `${base}/pay?destination=${encodeURIComponent(destination)}&amount=${encodeURIComponent(amount)}&asset=${encodeURIComponent(asset)}`;
+    if (memo) {
+      url += `&memo=${encodeURIComponent(memo)}&memoType=${encodeURIComponent(memoType)}`;
+    }
     setGeneratedUrl(url);
   }
 
@@ -75,6 +80,28 @@ export default function CreatePage() {
               <option key={a} value={a}>{a}</option>
             ))}
           </select>
+        </Field>
+
+        <Field label="Memo Type">
+          <select
+            value={memoType}
+            onChange={(e) => setMemoType(e.target.value)}
+            className="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-indigo-500"
+          >
+            <option value="text">Text</option>
+            <option value="id">ID</option>
+            <option value="hash">Hash</option>
+          </select>
+        </Field>
+
+        <Field label="Memo">
+          <input
+            type="text"
+            placeholder="Optional memo"
+            value={memo}
+            onChange={(e) => setMemo(e.target.value)}
+            className="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-indigo-500"
+          />
         </Field>
 
         {error && <p className="text-red-400 text-sm">{error}</p>}
