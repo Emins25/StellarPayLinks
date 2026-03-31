@@ -36,6 +36,15 @@ export default function CreatePage() {
     navigator.clipboard.writeText(generatedUrl);
   }
 
+  function toPreviewPath(url: string): string {
+    try {
+      const parsed = new URL(url);
+      return `${parsed.pathname}${parsed.search}`;
+    } catch {
+      return url;
+    }
+  }
+
   return (
     <div className="flex flex-col gap-6 mt-4">
       <h1 className="text-2xl font-bold">Create Payment Link</h1>
@@ -99,7 +108,7 @@ export default function CreatePage() {
               Copy
             </button>
             <Link
-              href={generatedUrl.replace(window.location.origin, "")}
+              href={toPreviewPath(generatedUrl)}
               className="px-4 py-2 text-sm bg-indigo-600 hover:bg-indigo-500 rounded-lg transition-colors"
             >
               Preview
