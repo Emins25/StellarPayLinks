@@ -1,10 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { StrKey } from "@stellar/stellar-sdk";
 import Link from "next/link";
-
-const ASSETS = ["XLM", "USDC", "USDT", "BTC", "ETH"];
+import { Field } from "@/components/Field";
+import {
+  SUPPORTED_ASSETS,
+  isValidStellarAddress,
+  buildPaymentUrl,
+} from "@/lib/stellar";
 
 export default function CreatePage() {
   const [destination, setDestination] = useState("");
@@ -20,7 +23,7 @@ export default function CreatePage() {
     setError("");
     setGeneratedUrl("");
 
-    if (!StrKey.isValidEd25519PublicKey(destination)) {
+    if (!isValidStellarAddress(destination)) {
       setError("Invalid Stellar address. Must be a valid G... public key.");
       return;
     }
@@ -40,6 +43,11 @@ export default function CreatePage() {
   function copyToClipboard() {
     navigator.clipboard.writeText(generatedUrl);
   }
+
+  // Derive the relative /pay path for the Next.js <Link> (avoids full-URL reload).
+  const previewPath = generatedUrl
+    ? generatedUrl.replace(window.location.origin, "")
+    : "";
 
   return (
     <div className="flex flex-col gap-6 mt-4">
@@ -76,8 +84,10 @@ export default function CreatePage() {
             onChange={(e) => setAsset(e.target.value)}
             className="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-indigo-500"
           >
-            {ASSETS.map((a) => (
-              <option key={a} value={a}>{a}</option>
+            {SUPPORTED_ASSETS.map((a) => (
+              <option key={a} value={a}>
+                {a}
+              </option>
             ))}
           </select>
         </Field>
@@ -117,7 +127,9 @@ export default function CreatePage() {
       {generatedUrl && (
         <div className="flex flex-col gap-3 mt-2 p-5 bg-gray-900 border border-gray-800 rounded-xl">
           <p className="text-sm text-gray-400">Your payment link</p>
-          <div className="text-sm break-all text-indigo-300 font-mono">{generatedUrl}</div>
+          <div className="text-sm break-all text-indigo-300 font-mono">
+            {generatedUrl}
+          </div>
           <div className="flex gap-3 mt-1">
             <button
               onClick={copyToClipboard}
@@ -126,7 +138,7 @@ export default function CreatePage() {
               Copy
             </button>
             <Link
-              href={generatedUrl.replace(window.location.origin, "")}
+              href={previewPath}
               className="px-4 py-2 text-sm bg-indigo-600 hover:bg-indigo-500 rounded-lg transition-colors"
             >
               Preview
@@ -134,15 +146,6 @@ export default function CreatePage() {
           </div>
         </div>
       )}
-    </div>
-  );
-}
-
-function Field({ label, children }: { label: string; children: React.ReactNode }) {
-  return (
-    <div className="flex flex-col gap-1.5">
-      <label className="text-sm text-gray-400">{label}</label>
-      {children}
     </div>
   );
 }
