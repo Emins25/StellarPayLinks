@@ -12,11 +12,13 @@ export default function CreatePage() {
   const [asset, setAsset] = useState("XLM");
   const [generatedUrl, setGeneratedUrl] = useState("");
   const [error, setError] = useState("");
+  const [copyStatus, setCopyStatus] = useState<"idle" | "copied" | "error">("idle");
 
   function handleGenerate(e: React.FormEvent) {
     e.preventDefault();
     setError("");
     setGeneratedUrl("");
+    setCopyStatus("idle");
 
     if (!StrKey.isValidEd25519PublicKey(destination)) {
       setError("Invalid Stellar address. Must be a valid G... public key.");
@@ -32,8 +34,15 @@ export default function CreatePage() {
     setGeneratedUrl(url);
   }
 
-  function copyToClipboard() {
-    navigator.clipboard.writeText(generatedUrl);
+  async function copyToClipboard() {
+    try {
+      await navigator.clipboard.writeText(generatedUrl);
+      setCopyStatus("copied");
+    } catch {
+      setCopyStatus("error");
+    }
+
+    setTimeout(() => setCopyStatus("idle"), 2000);
   }
 
   return (
@@ -96,7 +105,7 @@ export default function CreatePage() {
               onClick={copyToClipboard}
               className="px-4 py-2 text-sm border border-gray-700 hover:border-gray-500 rounded-lg transition-colors"
             >
-              Copy
+              {copyStatus === "copied" ? "Copied!" : "Copy"}
             </button>
             <Link
               href={generatedUrl.replace(window.location.origin, "")}
@@ -105,6 +114,16 @@ export default function CreatePage() {
               Preview
             </Link>
           </div>
+          {copyStatus === "copied" && (
+            <p className="text-xs text-green-400" role="status" aria-live="polite">
+              Link copied to clipboard.
+            </p>
+          )}
+          {copyStatus === "error" && (
+            <p className="text-xs text-red-400" role="status" aria-live="polite">
+              Failed to copy. Please try again.
+            </p>
+          )}
         </div>
       )}
     </div>
