@@ -3,6 +3,8 @@
 import { useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
 import QRCode from "qrcode";
+import { Row } from "@/components/Row";
+import { buildPaymentUrl } from "@/lib/stellar";
 
 function PaymentRequest() {
   const params = useSearchParams();
@@ -13,6 +15,7 @@ function PaymentRequest() {
   const memoType = params.get("memoType") ?? "";
   const [qrDataUrl, setQrDataUrl] = useState<string>("");
 
+  // Reconstruct the canonical URL so the QR code always encodes a clean link.
   const paymentUrl =
     typeof window !== "undefined"
       ? `${window.location.origin}/pay?destination=${destination}&amount=${amount}&asset=${asset}${memo ? `&memo=${memo}&memoType=${memoType}` : ""}`
@@ -28,7 +31,8 @@ function PaymentRequest() {
   if (!destination) {
     return (
       <div className="text-red-400 mt-6">
-        Missing <code className="bg-gray-800 px-1 rounded">destination</code> parameter.
+        Missing <code className="bg-gray-800 px-1 rounded">destination</code>{" "}
+        parameter.
       </div>
     );
   }
@@ -64,6 +68,7 @@ function PaymentRequest() {
       {qrDataUrl && (
         <div className="flex flex-col items-center gap-3">
           <p className="text-sm text-gray-400">Scan to pay</p>
+          {/* Using <img> intentionally — QR data URL is generated client-side */}
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={qrDataUrl}
@@ -81,15 +86,6 @@ function PaymentRequest() {
           {paymentUrl}
         </div>
       </div>
-    </div>
-  );
-}
-
-function Row({ label, value, mono }: { label: string; value: string; mono?: boolean }) {
-  return (
-    <div className="flex flex-col gap-0.5">
-      <span className="text-xs text-gray-500 uppercase tracking-wide">{label}</span>
-      <span className={`text-sm ${mono ? "font-mono break-all" : ""}`}>{value}</span>
     </div>
   );
 }
