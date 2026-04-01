@@ -1,15 +1,20 @@
 "use client";
 
 import { useState } from "react";
-import { StrKey } from "@stellar/stellar-sdk";
 import Link from "next/link";
-
-const ASSETS = ["XLM", "USDC", "USDT", "BTC", "ETH"];
+import { Field } from "@/components/Field";
+import {
+  SUPPORTED_ASSETS,
+  isValidStellarAddress,
+  buildPaymentUrl,
+} from "@/lib/stellar";
 
 export default function CreatePage() {
   const [destination, setDestination] = useState("");
   const [amount, setAmount] = useState("");
   const [asset, setAsset] = useState("XLM");
+  const [memo, setMemo] = useState("");
+  const [memoType, setMemoType] = useState("text");
   const [generatedUrl, setGeneratedUrl] = useState("");
   const [error, setError] = useState("");
 
@@ -18,7 +23,7 @@ export default function CreatePage() {
     setError("");
     setGeneratedUrl("");
 
-    if (!StrKey.isValidEd25519PublicKey(destination)) {
+    if (!isValidStellarAddress(destination)) {
       setError("Invalid Stellar address. Must be a valid G... public key.");
       return;
     }
@@ -28,7 +33,10 @@ export default function CreatePage() {
     }
 
     const base = typeof window !== "undefined" ? window.location.origin : "http://localhost:3000";
-    const url = `${base}/pay?destination=${encodeURIComponent(destination)}&amount=${encodeURIComponent(amount)}&asset=${encodeURIComponent(asset)}`;
+    let url = `${base}/pay?destination=${encodeURIComponent(destination)}&amount=${encodeURIComponent(amount)}&asset=${encodeURIComponent(asset)}`;
+    if (memo) {
+      url += `&memo=${encodeURIComponent(memo)}&memoType=${encodeURIComponent(memoType)}`;
+    }
     setGeneratedUrl(url);
   }
 
@@ -80,10 +88,34 @@ export default function CreatePage() {
             onChange={(e) => setAsset(e.target.value)}
             className="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-indigo-500"
           >
-            {ASSETS.map((a) => (
-              <option key={a} value={a}>{a}</option>
+            {SUPPORTED_ASSETS.map((a) => (
+              <option key={a} value={a}>
+                {a}
+              </option>
             ))}
           </select>
+        </Field>
+
+        <Field label="Memo Type">
+          <select
+            value={memoType}
+            onChange={(e) => setMemoType(e.target.value)}
+            className="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-indigo-500"
+          >
+            <option value="text">Text</option>
+            <option value="id">ID</option>
+            <option value="hash">Hash</option>
+          </select>
+        </Field>
+
+        <Field label="Memo">
+          <input
+            type="text"
+            placeholder="Optional memo"
+            value={memo}
+            onChange={(e) => setMemo(e.target.value)}
+            className="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-indigo-500"
+          />
         </Field>
 
         {error && <p className="text-red-400 text-sm">{error}</p>}
@@ -99,7 +131,9 @@ export default function CreatePage() {
       {generatedUrl && (
         <div className="flex flex-col gap-3 mt-2 p-5 bg-gray-900 border border-gray-800 rounded-xl">
           <p className="text-sm text-gray-400">Your payment link</p>
-          <div className="text-sm break-all text-indigo-300 font-mono">{generatedUrl}</div>
+          <div className="text-sm break-all text-indigo-300 font-mono">
+            {generatedUrl}
+          </div>
           <div className="flex gap-3 mt-1">
             <button
               onClick={copyToClipboard}
@@ -116,15 +150,6 @@ export default function CreatePage() {
           </div>
         </div>
       )}
-    </div>
-  );
-}
-
-function Field({ label, children }: { label: string; children: React.ReactNode }) {
-  return (
-    <div className="flex flex-col gap-1.5">
-      <label className="text-sm text-gray-400">{label}</label>
-      {children}
     </div>
   );
 }
