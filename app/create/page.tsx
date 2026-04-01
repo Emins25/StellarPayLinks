@@ -138,7 +138,7 @@ export default function CreatePage() {
               Copy
             </button>
             <Link
-              href={previewPath}
+              href={typeof window !== 'undefined' ? generatedUrl.replace(window.location.origin, "") : ""}
               className="px-4 py-2 text-sm bg-indigo-600 hover:bg-indigo-500 rounded-lg transition-colors"
             >
               Preview
