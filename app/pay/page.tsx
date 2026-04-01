@@ -22,17 +22,33 @@ function PaymentRequest() {
       : "";
 
   useEffect(() => {
-    if (!destination || !paymentUrl) return;
+    if (!destination || !amount || !asset) return;
     QRCode.toDataURL(paymentUrl, { width: 256, margin: 2 })
       .then(setQrDataUrl)
       .catch(console.error);
-  }, [paymentUrl, destination]);
+  }, [paymentUrl, destination, amount, asset]);
 
   if (!destination) {
     return (
       <div className="text-red-400 mt-6">
         Missing <code className="bg-gray-800 px-1 rounded">destination</code>{" "}
         parameter.
+      </div>
+    );
+  }
+
+  if (!amount || isNaN(Number(amount)) || Number(amount) <= 0) {
+    return (
+      <div className="text-red-400 mt-6">
+        Invalid or missing <code className="bg-gray-800 px-1 rounded">amount</code> parameter. Must be a positive number.
+      </div>
+    );
+  }
+
+  if (!asset) {
+    return (
+      <div className="text-red-400 mt-6">
+        Missing <code className="bg-gray-800 px-1 rounded">asset</code> parameter.
       </div>
     );
   }
