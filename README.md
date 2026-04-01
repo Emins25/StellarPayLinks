@@ -13,9 +13,24 @@ An open-source web app for generating Stellar payment links and QR codes.
 
 - [Next.js](https://nextjs.org/) (App Router)
 - TypeScript
-- Tailwind CSS
+- Tailwind CSS v4
 - [@stellar/stellar-sdk](https://github.com/stellar/js-stellar-sdk)
 - [qrcode](https://github.com/soldair/node-qrcode)
+
+## Project Structure
+
+```
+app/
+  page.tsx          # Landing page
+  layout.tsx        # Root layout (header, global styles)
+  create/page.tsx   # Payment link generator form
+  pay/page.tsx      # Payment details + QR code viewer
+components/
+  Field.tsx         # Labelled form field wrapper
+  Row.tsx           # Key/value display row
+lib/
+  stellar.ts        # Validation, URL building, shared constants
+```
 
 ## Getting Started
 
@@ -27,7 +42,7 @@ An open-source web app for generating Stellar payment links and QR codes.
 ### Install & Run
 
 ```bash
-git clone https://github.com/your-username/StellarPayLinks.git
+git clone https://github.com/StellarPayLinks/StellarPayLinks.git
 cd StellarPayLinks
 npm install
 npm run dev
@@ -47,9 +62,10 @@ npm start
 ### Generate a payment link
 
 Go to `/create`, fill in:
-- Destination — a valid Stellar public key (`G...`)
-- Amount — e.g. `10`
-- Asset — e.g. `XLM`
+
+- **Destination** — a valid Stellar public key (`G...`)
+- **Amount** — e.g. `10`
+- **Asset** — e.g. `XLM`
 
 Click **Generate Link** to get a shareable URL like:
 
@@ -60,6 +76,10 @@ http://localhost:3000/pay?destination=GABC...&amount=10&asset=XLM
 ### Share the link
 
 Anyone opening the link sees the payment details and a QR code they can scan with a Stellar wallet.
+
+## Contributing
+
+See [CONTRIBUTING.md](./CONTRIBUTING.md) for guidelines.
 
 ## License
 
