@@ -11,12 +11,14 @@ function PaymentRequest() {
   const destination = params.get("destination") ?? "";
   const amount = params.get("amount") ?? "";
   const asset = params.get("asset") ?? "XLM";
+  const memo = params.get("memo") ?? "";
+  const memoType = params.get("memoType") ?? "";
   const [qrDataUrl, setQrDataUrl] = useState<string>("");
 
   // Reconstruct the canonical URL so the QR code always encodes a clean link.
   const paymentUrl =
     typeof window !== "undefined"
-      ? buildPaymentUrl(window.location.origin, destination, amount, asset)
+      ? `${window.location.origin}/pay?destination=${destination}&amount=${amount}&asset=${asset}${memo ? `&memo=${memo}&memoType=${memoType}` : ""}`
       : "";
 
   useEffect(() => {
@@ -43,6 +45,8 @@ function PaymentRequest() {
         <Row label="Destination" value={destination} mono />
         <Row label="Amount" value={`${amount} ${asset}`} />
         <Row label="Asset" value={asset} />
+        {memo && <Row label="Memo" value={memo} mono />}
+        {memo && <Row label="Memo Type" value={memoType} />}
       </div>
 
       {qrDataUrl && (
