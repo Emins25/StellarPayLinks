@@ -52,6 +52,13 @@ function PaymentRequest() {
             width={256}
             height={256}
           />
+          <a
+            href={qrDataUrl}
+            download="stellar-payment-qr.png"
+            className="px-4 py-2 text-sm border border-gray-700 hover:border-gray-500 rounded-lg transition-colors"
+          >
+            Download QR
+          </a>
         </div>
       )}
 
